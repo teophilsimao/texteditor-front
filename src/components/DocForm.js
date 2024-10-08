@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate} from 'react-router-dom';
 
 const DocumentForm = () => {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const { id } = useParams();
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchDoc = async () => {
@@ -45,7 +45,7 @@ const DocumentForm = () => {
             if (!response.ok) {
                 throw new Error(`Miss`);
             }
-            window.location.href = '/';
+            navigate('/');
         } catch (error) {
             console.error(`Error ${id ? 'updating' : 'creating'} document:`, error);
         }
@@ -75,7 +75,7 @@ const DocumentForm = () => {
             />
           </div>
           <button type="submit">{id ? 'Save' : 'Create'}</button>
-          <button onClick={() => window.location.href='/'}>Cancel</button>
+          <button onClick={() => navigate('/')}>Cancel</button>
         </form>
       </div>
     );
