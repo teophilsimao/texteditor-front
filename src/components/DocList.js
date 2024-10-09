@@ -7,7 +7,7 @@ const DocumentList = () => {
     useEffect(() => {
         const fetchDocs = async () => {
             try {
-                const response = await fetch('https://jsramverk-editor-tesi23-beh7hvfadub6fugk.northeurope-01.azurewebsites.net/');
+                const response = await fetch('https://jsramverk-editor-tesi23-beh7hvfadub6fugk.northeurope-01.azurewebsites.net/data');
                 const data = await response.json()
                 setDocs(data);
             } catch (error) {
@@ -20,7 +20,7 @@ const DocumentList = () => {
 
     const deleteDoc = async (id) => {
         try {
-            const response = await fetch(`https://jsramverk-editor-tesi23-beh7hvfadub6fugk.northeurope-01.azurewebsites.net/${id}`, {
+            const response = await fetch(`https://jsramverk-editor-tesi23-beh7hvfadub6fugk.northeurope-01.azurewebsites.net/data/${id}`, {
                 method: 'DELETE'
             });
 

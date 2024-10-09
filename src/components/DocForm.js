@@ -11,7 +11,7 @@ const DocumentForm = () => {
         const fetchDoc = async () => {
             if (id) {
                 try {
-                    const response = await fetch(`https://jsramverk-editor-tesi23-beh7hvfadub6fugk.northeurope-01.azurewebsites.net/${id}`);
+                    const response = await fetch(`https://jsramverk-editor-tesi23-beh7hvfadub6fugk.northeurope-01.azurewebsites.net/data/${id}`);
                     const data = await response.json();
                     setTitle(data.title);
                     setContent(data.content);
@@ -38,7 +38,7 @@ const DocumentForm = () => {
               body: JSON.stringify(docData)
             };
 
-            const url = id ? `https://jsramverk-editor-tesi23-beh7hvfadub6fugk.northeurope-01.azurewebsites.net/${id}` : 'https://jsramverk-editor-tesi23-beh7hvfadub6fugk.northeurope-01.azurewebsites.net/';
+            const url = id ? `https://jsramverk-editor-tesi23-beh7hvfadub6fugk.northeurope-01.azurewebsites.net/data/${id}` : 'https://jsramverk-editor-tesi23-beh7hvfadub6fugk.northeurope-01.azurewebsites.net/data';
 
             const response = await fetch(url, requestOptions);
 
