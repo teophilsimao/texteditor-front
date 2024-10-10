@@ -2,7 +2,7 @@ import { render, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
-import DocList from './DocList';
+import DocList from '../DocList';
 
 global.fetch = jest.fn();
 

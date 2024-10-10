@@ -1,13 +1,20 @@
 import React, {useState, useEffect} from 'react';
 import {Link} from 'react-router-dom';
+import LogoutButton from '../user/UserLogout';
 
 const DocumentList = () => {
     const [documents, setDocs] = useState([]);
 
     useEffect(() => {
         const fetchDocs = async () => {
+            const token = localStorage.getItem('token');
+
             try {
-                const response = await fetch('https://jsramverk-editor-tesi23-beh7hvfadub6fugk.northeurope-01.azurewebsites.net/data');
+                const response = await fetch('http://localhost:9000/documents/', {
+                    headers: {
+                        'x-access-token': `${token}`,
+                    }
+                });
                 const data = await response.json()
                 setDocs(data);
             } catch (error) {
@@ -19,9 +26,14 @@ const DocumentList = () => {
     }, []);
 
     const deleteDoc = async (id) => {
+        const token = localStorage.getItem('token');
+
         try {
-            const response = await fetch(`https://jsramverk-editor-tesi23-beh7hvfadub6fugk.northeurope-01.azurewebsites.net/data/${id}`, {
-                method: 'DELETE'
+            const response = await fetch(`http://localhost:9000/documents/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'x-access-token': `${token}`,
+                },
             });
 
             if (!response.ok) {
@@ -36,13 +48,14 @@ const DocumentList = () => {
 
     return (
         <div>
+            < LogoutButton />
             <h2>Documents</h2>
-            <Link to="/document/new">Create New Document</Link>
+            <Link to="/documents/new">Create New Document</Link>
             <div className='list-container'>
                 <ul>
                     {documents.map((doc) => (
                         <li key={doc._id}>
-                            <Link to={`/document/${doc._id}/edit`}>{doc.title}</Link>
+                            <Link to={`/documents/${doc._id}/edit`}>{doc.title}</Link>
                             <button onClick={() => deleteDoc(doc._id)}>Delete</button>
                         </li>
                     ))}

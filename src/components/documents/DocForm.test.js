@@ -2,7 +2,7 @@ import { render, screen, act } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
-import DocForm from './DocForm';
+import DocForm from '../DocForm';
 // import { act } from 'react';
 
 global.fetch = jest.fn(() =>
