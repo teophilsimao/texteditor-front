@@ -70,7 +70,7 @@ const UserLogin = () => {
                 <button type='submit'>{registered ? 'Register' : 'Login'}</button>
             </form>
             <button onClick={() => setRegistered(!registered)}>
-                {registered ? 'Login' : 'Register'}
+                {registered ? 'Click here to login' : 'Click here to register'}
             </button>
         </div>
     );
