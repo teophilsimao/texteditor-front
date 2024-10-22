@@ -2,10 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate} from 'react-router-dom';
 import LogoutButton from '../user/UserLogout';
 
-const DocumentForm = () => {
+const DocumentFormEdit = () => {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
+    const [shareEmail, setShareEmail] = useState('');
     const { id } = useParams();
+    const [error, setError] = useState('');
+    const [message, setMessage] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -39,7 +42,7 @@ const DocumentForm = () => {
 
         try {
             const requestOptions = {
-              method: id ? 'PUT' : 'POST',
+              method:'PUT',
               headers: {
                   'Content-Type': 'application/json',
                   'x-access-token': `${token}`,
@@ -47,7 +50,7 @@ const DocumentForm = () => {
               body: JSON.stringify(docData)
             };
 
-            const url = id ? `http://localhost:9000/documents/${id}` : 'http://localhost:9000/documents/';
+            const url = `http://localhost:9000/documents/${id}`;
 
             const response = await fetch(url, requestOptions);
 
@@ -56,15 +59,46 @@ const DocumentForm = () => {
             }
             navigate('/documents');
         } catch (error) {
-            console.error(`Error ${id ? 'updating' : 'creating'} document:`, error);
+            console.error(`Error 'updating' document:`, error);
         }
     };
+
+    const shareDoc = async () => {
+      const token = localStorage.getItem('token');
+      const docData = { email: shareEmail };
+
+      try {
+        const requestOptions = {
+          method:'POST',
+          headers: {
+              'Content-Type': 'application/json',
+              'x-access-token': `${token}`,
+          },
+          body: JSON.stringify(docData)
+        };
+
+        const url = `http://localhost:9000/documents/${id}/share`;
+
+        const response = await fetch(url, requestOptions);
+
+        if (response.ok) {
+          setMessage('Document shared');
+          setShareEmail('');
+        } else {
+          const errorData = await response.json();
+          setError(`Failed to share document: ${errorData.errors.detail}`);
+        }
+      } catch (error) {
+        console.error('Error sharing document:', error);
+        setError('Failed to share document!');
+      }
+    }
 
     return (
       <div id="form-container">
         < LogoutButton />
         <form onSubmit={submitDoc}>
-        <h2>{id ? 'Edit Document' : 'Create New Document'}</h2>
+        <h2>Edit Document</h2>
           <label htmlFor='title'>Title:</label>
           <div id="title-container">
             <input
@@ -84,11 +118,26 @@ const DocumentForm = () => {
               required
             />
           </div>
-          <button type="submit">{id ? 'Save' : 'Create'}</button>
-          <button onClick={() => navigate('/')}>Cancel</button>
+          <button type="submit">Save</button>
+          <button onClick={() => navigate('/documents')}>Cancel</button>
         </form>
+
+        {id && (
+          <div>
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {message && <p style={{ color: 'green' }}>{message}</p>}
+            <h3>Share Document</h3>
+            <input
+            type='email'
+            placeholder='Enter email to share'
+            value={shareEmail}
+            onChange={(e) => setShareEmail(e.target.value)} 
+            />
+            <button onClick={shareDoc}>Share</button>
+          </div>
+        )}
       </div>
     );
 };
 
-export default DocumentForm;
+export default DocumentFormEdit;

@@ -1,7 +1,8 @@
 import React from "react";
 import {HashRouter as Router, Route, Routes} from 'react-router-dom';
 import DocList from "./components/documents/DocList";
-import DocForm from "./components/documents/DocForm";
+import DocumentFormEdit from "./components/documents/DocFormEdit";
+import DocumentFormCreate from "./components/documents/DocFormCreate";
 import UserLogin from "./components/user/UserLogin";
 import UserRegister from "./components/user/UserRegister";
 import PrivateRoute from "./components/user/PrivateRoute";
@@ -30,7 +31,7 @@ function App() {
           path="/documents/new" 
           element={
             <PrivateRoute>
-              <DocForm />
+              <DocumentFormCreate />
             </PrivateRoute>} 
           />
 
@@ -38,7 +39,7 @@ function App() {
           path="/documents/:id/edit" 
           element={
             <PrivateRoute>
-              <DocForm />
+              <DocumentFormEdit />
             </PrivateRoute>} 
           />
           <Route path="/verify-email" element={<EmailVerification />} />

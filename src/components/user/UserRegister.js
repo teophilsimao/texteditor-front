@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const UserRegister = () => {
     const [email, setEmail] = useState('');
@@ -7,6 +7,17 @@ const UserRegister = () => {
     const [error, setError] = useState('');
     const [message, setMessage] = useState('');
     const navigate = useNavigate();
+    const location = useLocation();
+
+    useEffect(() => {
+
+        const emailQuery = new URLSearchParams(location.search);
+        const theEmail = emailQuery.get('email')
+
+        if (theEmail) {
+            setEmail(theEmail);
+        }
+    }, [location.search]);
     
     const handleSubmit = async (e) => {
         e.preventDefault();
