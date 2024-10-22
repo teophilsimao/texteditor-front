@@ -3,6 +3,7 @@ import {HashRouter as Router, Route, Routes} from 'react-router-dom';
 import DocList from "./components/documents/DocList";
 import DocForm from "./components/documents/DocForm";
 import UserLogin from "./components/user/UserLogin";
+import UserRegister from "./components/user/UserRegister";
 import PrivateRoute from "./components/user/PrivateRoute";
 import UserVerified from "./components/user/UserVerified";
 import EmailVerification from "./components/user/EmailVerification";
@@ -15,6 +16,7 @@ function App() {
       <div>
         <Routes>
           <Route path="/" element={<UserLogin />}/>
+          <Route path="/register" element={< UserRegister />} />
 
           <Route 
           path="/documents" 

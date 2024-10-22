@@ -1,16 +1,17 @@
 import React, {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const UserLogin = () => {
+const UserRegister = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [message, setMessage] = useState('');
     const navigate = useNavigate();
     
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const url = 'http://localhost:9000/login';
+        const url = 'http://localhost:9000/register';
         const userData = { email, password };
 
         try {
@@ -26,19 +27,19 @@ const UserLogin = () => {
                 throw new Error('Faild')
             }
 
-            const data = await response.json();
-            localStorage.setItem('token', data.data.token);
-            navigate('/documents');
+            setMessage('Please check your email to verify your account. Once verified, you can log in.');
+            setError('');
         } catch (error) {
-            setError('Failed to login. Please try again');
+            setError('Failed to register. Please try again');
             console.error(error);
         }
     };
 
     return (
         <div>
-            <h2>Login</h2>
+            <h2>Register</h2>
             {error && <p style={{ color: 'red' }}>{error}</p>}
+            {message && <p style={{ color: 'green' }}>{message}</p>}
             <form onSubmit={handleSubmit}>
                 <div>
                     <label htmlFor='email'>Email:</label>
@@ -58,13 +59,13 @@ const UserLogin = () => {
                         onChange={(e) => setPassword(e.target.value)}
                     />
                 </div>
-                <button type='submit'>Login</button>
+                <button type='submit'>Register</button>
             </form>
-            <button onClick={() => navigate('/register')}>
-                Click here to register
+            <button onClick={() => navigate('/')}>
+                Click here to login
             </button>
         </div>
     );
 };
 
-export default UserLogin;
+export default UserRegister;
