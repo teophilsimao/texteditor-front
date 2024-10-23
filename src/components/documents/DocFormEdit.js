@@ -14,15 +14,18 @@ const DocumentFormEdit = () => {
     useEffect(() => {
         const fetchDoc = async () => {
         const token = localStorage.getItem('token');
+        const url = `http://localhost:9000/documents/${id}`;
 
             if (id) {
                 try {
-                    const response = await fetch(`http://localhost:9000/documents/${id}`, {
+                    const requestOptions = {
                       headers: {
                         'x-access-token': `${token}`,
                       },
-                    });
-                    const data = await response.json();
+                    };
+                    const response = await fetch(url, requestOptions);
+                    const data = await response.json() 
+
                     setTitle(data.title);
                     setContent(data.content);
                 } catch (error) {
@@ -38,8 +41,8 @@ const DocumentFormEdit = () => {
         e.preventDefault();
 
         const token = localStorage.getItem('token');
+        const url = `http://localhost:9000/documents/${id}`;
         const docData = { title, content };
-
         try {
             const requestOptions = {
               method:'PUT',
@@ -50,13 +53,7 @@ const DocumentFormEdit = () => {
               body: JSON.stringify(docData)
             };
 
-            const url = `http://localhost:9000/documents/${id}`;
-
-            const response = await fetch(url, requestOptions);
-
-            if (!response.ok) {
-                throw new Error(`Miss`);
-            }
+            await fetch(url, requestOptions);
             navigate('/documents');
         } catch (error) {
             console.error(`Error 'updating' document:`, error);
@@ -65,8 +62,8 @@ const DocumentFormEdit = () => {
 
     const shareDoc = async () => {
       const token = localStorage.getItem('token');
+      const url = `http://localhost:9000/documents/${id}/share`;
       const docData = { email: shareEmail };
-
       try {
         const requestOptions = {
           method:'POST',
@@ -76,13 +73,10 @@ const DocumentFormEdit = () => {
           },
           body: JSON.stringify(docData)
         };
-
-        const url = `http://localhost:9000/documents/${id}/share`;
-
         const response = await fetch(url, requestOptions);
 
         if (response.ok) {
-          setMessage('Document shared');
+          setMessage(`Document shared to ${shareEmail}`);
           setShareEmail('');
         } else {
           const errorData = await response.json();

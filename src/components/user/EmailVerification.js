@@ -10,16 +10,9 @@ const EmailVerification = () => {
             const params = new URLSearchParams(search);
             const code = params.get('code');
             const email = params.get('email');
-
+            const url = `http://localhost:9000/verify?code=${code}&email=${email}`;
             try {
-                const response = await fetch(`http://localhost:9000/verify?code=${code}&email=${email}`);
-
-                if (!response.ok) {
-                    throw new Error('Verification failed');
-                }
-
-                const data = await response.json();
-                console.log(data.message); 
+                await fetch(`${url}`);
                 navigate('/user-verified');
             } catch (error) {
                 console.error('Error verifying email:', error);

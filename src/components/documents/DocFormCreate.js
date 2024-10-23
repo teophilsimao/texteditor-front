@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import LogoutButton from '../user/UserLogout';
 
 const DocumentFormCreate = () => {
@@ -11,6 +11,7 @@ const DocumentFormCreate = () => {
         e.preventDefault();
 
         const token = localStorage.getItem('token');
+        const url = 'http://localhost:9000/documents/';
         const docData = { title, content };
 
         try {
@@ -23,13 +24,7 @@ const DocumentFormCreate = () => {
               body: JSON.stringify(docData)
             };
 
-            const url = 'http://localhost:9000/documents/';
-
-            const response = await fetch(url, requestOptions);
-
-            if (!response.ok) {
-                throw new Error(`Miss`);
-            }
+            await fetch(url, requestOptions);
             navigate('/documents');
         } catch (error) {
             console.error(`Error creating document:`, error);
@@ -60,7 +55,7 @@ const DocumentFormCreate = () => {
               required
             />
           </div>
-          <button type="submit">'Create</button>
+          <button type="submit">Create</button>
           <button onClick={() => navigate('/documents')}>Cancel</button>
         </form>
       </div>

@@ -14,19 +14,16 @@ const UserLogin = () => {
         const userData = { email, password };
 
         try {
-            const response = await fetch(url, {
+            const requestOptions = {
                 method: 'POST',
                 headers: {
                     'content-type': 'application/json',
                 },
                 body: JSON.stringify(userData),
-            });
+            };
+            const response = await fetch(url, requestOptions);
+            const data = await response.json()
 
-            if (!response.ok) {
-                throw new Error('Faild')
-            }
-
-            const data = await response.json();
             localStorage.setItem('token', data.data.token);
             navigate('/documents');
         } catch (error) {

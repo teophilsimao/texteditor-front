@@ -26,18 +26,15 @@ const UserRegister = () => {
         const userData = { email, password };
 
         try {
-            const response = await fetch(url, {
+            const requestOptions = {
                 method: 'POST',
                 headers: {
                     'content-type': 'application/json',
                 },
                 body: JSON.stringify(userData),
-            });
+            };
 
-            if (!response.ok) {
-                throw new Error('Faild')
-            }
-
+            await fetch(url, requestOptions);
             setMessage('Please check your email to verify your account. Once verified, you can log in.');
             setError('');
         } catch (error) {
