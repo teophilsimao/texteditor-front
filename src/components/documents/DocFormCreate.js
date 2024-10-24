@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LogoutButton from '../user/UserLogout';
 import { Editor } from '@monaco-editor/react';
@@ -79,7 +79,9 @@ const DocumentFormCreate = () => {
                           automaticLayout: true,
                           theme: 'vs-dark'
                       }}
+                      onChange={(newValue) => setContent(newValue)}
                       onMount={(editor, monaco) => handleTheme(editor, monaco, editorMode)}
+                      required
                   />
               )}
           </div>

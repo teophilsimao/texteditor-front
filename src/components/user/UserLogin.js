@@ -61,6 +61,14 @@ const UserLogin = () => {
             <button onClick={() => navigate('/register')}>
                 Click here to register
             </button>
+            <a 
+                href="/request-reset-password"
+                onClick={(e) => {
+                    e.preventDefault(); // Prevent default anchor behavior
+                    navigate('/request-reset-password');
+                }}>
+                Can't log in?
+            </a>
         </div>
     );
 };

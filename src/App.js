@@ -8,6 +8,8 @@ import UserRegister from "./components/user/UserRegister";
 import PrivateRoute from "./components/user/PrivateRoute";
 import UserVerified from "./components/user/UserVerified";
 import EmailVerification from "./components/user/EmailVerification";
+import UserRequestReset from "./components/user/UserRequestReset";
+import UserResetPassword from "./components/user/UserResetPassword";
 import './App.css';
 
 function App() {
@@ -18,6 +20,10 @@ function App() {
         <Routes>
           <Route path="/" element={<UserLogin />}/>
           <Route path="/register" element={< UserRegister />} />
+          <Route path="/verify-email" element={<EmailVerification />} />
+          <Route path="/user-verified" element={<UserVerified />} />
+          <Route path="/request-reset-password" element={< UserRequestReset />} />
+          <Route path="/reset-password" element={< UserResetPassword />} />
 
           <Route 
           path="/documents" 
@@ -42,8 +48,6 @@ function App() {
               <DocumentFormEdit />
             </PrivateRoute>} 
           />
-          <Route path="/verify-email" element={<EmailVerification />} />
-          <Route path="/user-verified" element={<UserVerified />} />
         </Routes>
       </div>
     </Router>
