@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LogoutButton from '../user/UserLogout';
 import { Editor } from '@monaco-editor/react';
-import { handleTheme } from './modell/editorFunc';
+import { handleTheme, useMessage } from '../modell/editorUtils';
 
 const DocumentFormCreate = () => {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
-    const [error, setError] = useState('');
+    const { error, setError} = useMessage();
     const [editorMode, setEditorMode] = useState('text');
     const navigate = useNavigate();
 

@@ -2,15 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate} from 'react-router-dom';
 import LogoutButton from '../user/UserLogout';
 import { Editor } from '@monaco-editor/react';
-import { handleTheme } from './modell/editorFunc';
+import { handleTheme, useMessage } from '../modell/editorUtils';
 
 const DocumentFormEdit = () => {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [shareEmail, setShareEmail] = useState('');
     const { id } = useParams();
-    const [error, setError] = useState('');
-    const [message, setMessage] = useState('');
+    const { error, setError, message, setMessage } = useMessage();
     const [editorMode, setEditorMode] = useState('text');
     const navigate = useNavigate();
 
@@ -115,11 +114,11 @@ const DocumentFormEdit = () => {
           setMessage(`Result: ${decodedOutput}`);
         } else {
           const errorData = await response.json();
-          setError(`Execution failed: ${errorData.message}`);
+          setError(`Failedto run: ${errorData.message} Make sure to save the edited code before running`);
         }
       } catch (error) {
         console.error('Error executing code:', error);
-        setError('Failed to execute code!');
+        setError('Failed to run the code!');
       }
     }
 
