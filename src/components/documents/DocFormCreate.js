@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LogoutButton from '../user/UserLogout';
+import { Editor } from '@monaco-editor/react';
+import { handleTheme } from './modell/editorFunc';
 
 const DocumentFormCreate = () => {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
+    const [error, setError] = useState('');
+    const [editorMode, setEditorMode] = useState('text');
     const navigate = useNavigate();
 
     const submitDoc = async (e) => {
@@ -12,7 +16,7 @@ const DocumentFormCreate = () => {
 
         const token = localStorage.getItem('token');
         const url = 'http://localhost:9000/documents/';
-        const docData = { title, content };
+        const docData = { title, content, type: editorMode };
 
         try {
             const requestOptions = {
@@ -24,9 +28,16 @@ const DocumentFormCreate = () => {
               body: JSON.stringify(docData)
             };
 
-            await fetch(url, requestOptions);
-            navigate('/documents');
+            const response = await fetch(url, requestOptions);
+            if (response.ok) {
+              const newDoc = await response.json();
+              const newId = newDoc._id;
+              navigate(`/documents/${newId}/edit`);
+            } else {
+              setError('Failed to create Documnet');
+            }
         } catch (error) {
+            setError('Failed to create Documnet');
             console.error(`Error creating document:`, error);
         }
     };
@@ -48,13 +59,31 @@ const DocumentFormCreate = () => {
           </div>
           <label htmlFor="content">Content:</label>
           <div id="textarea-container">
-            <textarea
-              id="content"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              required
-            />
+              <select onChange={(e) => setEditorMode(e.target.value)} value={editorMode}>
+                  <option value="text">Text Editor</option>
+                  <option value="code">Code Editor</option>
+              </select>
+              {editorMode === 'text' ? (
+                  <textarea
+                      id="content"
+                      value={content}
+                      onChange={(e) => setContent(e.target.value)}
+                      required
+                  />
+              ) : (
+                  <Editor
+                      height="400px"
+                      value={content}
+                      defaultLanguage="javascript"
+                      options={{
+                          automaticLayout: true,
+                          theme: 'vs-dark'
+                      }}
+                      onMount={(editor, monaco) => handleTheme(editor, monaco, editorMode)}
+                  />
+              )}
           </div>
+          {error && <p style={{ color: 'red' }}>{error}</p>}
           <button type="submit">Create</button>
           <button onClick={() => navigate('/documents')}>Cancel</button>
         </form>

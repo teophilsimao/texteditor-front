@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate} from 'react-router-dom';
 import LogoutButton from '../user/UserLogout';
 import { Editor } from '@monaco-editor/react';
-// import {Controlled as CodeMirror} from 'react-codemirror2';
-// import 'codemirror/lib/codemirror.css';
-
+import { handleTheme } from './modell/editorFunc';
 
 const DocumentFormEdit = () => {
     const [title, setTitle] = useState('');
@@ -161,11 +159,12 @@ const DocumentFormEdit = () => {
                   defaultLanguage='javascript'
                   options={{
                       automaticLayout: true,
-                      theme: 'vs-dark'
+                      theme: 'vs-dark',
                   }}
                   onChange={(value) => {
                       setContent(value);
                   }}
+                  onMount={(editor, monaco) => handleTheme(editor, monaco, editorMode)}
               />
             )}
           </div>
