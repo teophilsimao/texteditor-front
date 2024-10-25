@@ -36,3 +36,36 @@ export const useMessage = () => {
         clearMessages,
     };
 };
+
+export const useDocs = () => {
+    const [title, setTitle] = useState('');
+    const [content, setContent] = useState('');
+    const [shareEmail, setShareEmail] = useState('');
+    const [editorMode, setEditorMode] = useState('text');
+
+    return {
+        title,
+        setTitle,
+        content,
+        setContent,
+        shareEmail,
+        setShareEmail,
+        editorMode,
+        setEditorMode
+    };
+};
+
+export const useUser = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [token, setToken] = useState('');
+
+    return {
+        email,
+        setEmail,
+        password,
+        setPassword,
+        token,
+        setToken
+    };
+};

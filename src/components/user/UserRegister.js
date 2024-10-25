@@ -38,6 +38,9 @@ const UserRegister = () => {
 
             if (response.ok) {
                 setMessage('Please check your email to verify your account. Once verified, you can log in.');
+            } else {
+                const errorData = await response.json();
+                setError(errorData.errors?.detail || 'Something went wrong');
             }
         } catch (error) {
             setError('Failed to register. Please try again');
