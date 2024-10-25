@@ -114,7 +114,7 @@ const DocumentFormEdit = () => {
           setMessage(`Result: ${decodedOutput}`);
         } else {
           const errorData = await response.json();
-          setError(`Failedto run: ${errorData.message} Make sure to save the edited code before running`);
+          setError(`Failedto run: Make sure to save the edited code before running`);
         }
       } catch (error) {
         console.error('Error executing code:', error);

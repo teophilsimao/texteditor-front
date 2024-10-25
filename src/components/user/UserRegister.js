@@ -34,9 +34,11 @@ const UserRegister = () => {
                 body: JSON.stringify(userData),
             };
 
-            await fetch(url, requestOptions);
-            setMessage('Please check your email to verify your account. Once verified, you can log in.');
-            setError('');
+            const response = await fetch(url, requestOptions);
+
+            if (response.ok) {
+                setMessage('Please check your email to verify your account. Once verified, you can log in.');
+            }
         } catch (error) {
             setError('Failed to register. Please try again');
             console.error(error);
