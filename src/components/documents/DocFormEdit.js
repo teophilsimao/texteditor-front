@@ -3,6 +3,9 @@ import { useParams, useNavigate} from 'react-router-dom';
 import LogoutButton from '../user/UserLogout';
 import { Editor } from '@monaco-editor/react';
 import { handleTheme, useMessage } from '../modell/editorUtils';
+import { io } from 'socket.io-client';
+
+const URL = 'http://localhost:9000'
 
 const DocumentFormEdit = () => {
     const [title, setTitle] = useState('');
@@ -12,12 +15,13 @@ const DocumentFormEdit = () => {
     const { error, setError, message, setMessage } = useMessage();
     const [editorMode, setEditorMode] = useState('text');
     const navigate = useNavigate();
+    const [socket, setSocket] = useState(null);
 
     useEffect(() => {
-        const fetchDoc = async () => {
+      const fetchDoc = async () => {
         const token = localStorage.getItem('token');
         const url = `http://localhost:9000/documents/${id}`;
-
+        
             if (id) {
                 try {
                     const requestOptions = {
@@ -26,8 +30,8 @@ const DocumentFormEdit = () => {
                       },
                     };
                     const response = await fetch(url, requestOptions);
-                    const data = await response.json() 
-
+                    const data = await response.json()
+  
                     setTitle(data.title);
                     setContent(data.content);
                     setEditorMode(data.type);
@@ -37,8 +41,60 @@ const DocumentFormEdit = () => {
             }
         };
 
-        fetchDoc();
+      fetchDoc();
+
     }, [id]);
+
+    useEffect(() => {
+      const token = localStorage.getItem('token');
+
+      const newSocket = io(URL, {
+        auth: { token },
+      });
+
+      newSocket.on("connect", () => {
+          console.log("Connected with socket ID:", newSocket.id);
+          newSocket.emit("create", id);
+          console.log(`User attempting to join room: ${id}`);
+      });
+
+      newSocket.on("reconnect", () => {
+          newSocket.emit("create", id);
+          console.log(`Reconnected and rejoining room: ${id}`);
+      });
+
+      setSocket(newSocket);
+
+      return () => {
+          newSocket.emit("leave", id);
+          newSocket.disconnect();
+      };
+    }, [id]);
+
+    useEffect(() => {
+      if (!socket) return;
+      
+      socket.on('docUpdate', (data) => {
+        const {field, value} = data;
+
+        if(field === 'title') setTitle(value);
+        else if(field === 'content') setContent(value);
+        else if(field === 'type') setEditorMode(value);
+      })
+
+      return () => {
+        socket.off('docUpdate');
+      };
+    }, [socket])
+
+    const handleFieldChange = (field, value) => {
+      if (field === 'title') setTitle(value);
+      else if (field === 'content') setContent(value);
+      else if (field === 'type') setEditorMode(value);
+      console.log(field, value)
+
+      socket.emit('updateDoc', { roomId: id, field, value });
+    };
 
     const submitDoc = async (e) => {
         e.preventDefault();
@@ -113,7 +169,7 @@ const DocumentFormEdit = () => {
           const decodedOutput = atob(result.data); 
           setMessage(`Result: ${decodedOutput}`);
         } else {
-          const errorData = await response.json();
+          // const errorData = await response.json();
           setError(`Failedto run: Make sure to save the edited code before running`);
         }
       } catch (error) {
@@ -133,14 +189,14 @@ const DocumentFormEdit = () => {
               id="title"
               type="text"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e) => handleFieldChange('title', e.target.value)}
               required
             />
           </div>
           
           <label htmlFor="content">Content:</label>
           <div id="textarea-container">
-            <select onChange={(e) => setEditorMode(e.target.value)} value={editorMode}>
+            <select onChange={(e) => handleFieldChange('type', e.target.value)} value={editorMode}>
                 <option value="text">Text Editor</option>
                 <option value="code">Code Editor</option>
             </select>
@@ -148,7 +204,7 @@ const DocumentFormEdit = () => {
               <textarea
                   id="content"
                   value={content}
-                  onChange={(e) => setContent(e.target.value)}
+                  onChange={(e) => handleFieldChange('content',e.target.value)}
                   required
               />
             ) : (
@@ -161,7 +217,7 @@ const DocumentFormEdit = () => {
                       theme: 'vs-dark',
                   }}
                   onChange={(value) => {
-                      setContent(value);
+                    handleFieldChange('content', value);
                   }}
                   onMount={(editor, monaco) => handleTheme(editor, monaco, editorMode)}
               />
