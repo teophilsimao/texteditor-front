@@ -1,11 +1,13 @@
 import React, {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMessage } from '../modell/editorUtils';
+import { useSocket } from '../../context/SocketContext';
 
 const UserLogin = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const { error, setError} = useMessage();
+    const { connectSocket } = useSocket();
     const navigate = useNavigate();
     
     const handleSubmit = async (e) => {
@@ -25,8 +27,14 @@ const UserLogin = () => {
             const response = await fetch(url, requestOptions);
             const data = await response.json()
 
-            localStorage.setItem('token', data.data.token);
-            navigate('/documents');
+
+            if (response.ok) {
+                localStorage.setItem('token', data.data.token);
+                connectSocket(data.data.token)
+                navigate('/documents');
+            } else {
+                setError('Failed to login. Please try again');
+            }
         } catch (error) {
             setError('Failed to login. Please try again');
             console.error(error);

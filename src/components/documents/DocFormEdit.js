@@ -3,9 +3,8 @@ import { useParams, useNavigate} from 'react-router-dom';
 import LogoutButton from '../user/UserLogout';
 import { Editor } from '@monaco-editor/react';
 import { handleTheme, useMessage } from '../modell/editorUtils';
-import { io } from 'socket.io-client';
+import { useSocket } from '../../context/SocketContext';
 
-const URL = 'http://localhost:9000'
 
 const DocumentFormEdit = () => {
     const [title, setTitle] = useState('');
@@ -14,8 +13,8 @@ const DocumentFormEdit = () => {
     const { id } = useParams();
     const { error, setError, message, setMessage } = useMessage();
     const [editorMode, setEditorMode] = useState('text');
+    const { socket } = useSocket();
     const navigate = useNavigate();
-    const [socket, setSocket] = useState(null);
 
     useEffect(() => {
       const fetchDoc = async () => {
@@ -46,46 +45,24 @@ const DocumentFormEdit = () => {
     }, [id]);
 
     useEffect(() => {
-      const token = localStorage.getItem('token');
+        if (socket) {
+            socket.emit("create", id);
+            console.log(`User joined room: ${id}`);
 
-      const newSocket = io(URL, {
-        auth: { token },
-      });
+            socket.on("docUpdate", (data) => {
+                const { field, value } = data;
+                if (field === 'title') setTitle(value);
+                else if (field === 'content') setContent(value);
+                else if (field === 'type') setEditorMode(value);
+            });
 
-      newSocket.on("connect", () => {
-          console.log("Connected with socket ID:", newSocket.id);
-          newSocket.emit("create", id);
-          console.log(`User attempting to join room: ${id}`);
-      });
-
-      newSocket.on("reconnect", () => {
-          newSocket.emit("create", id);
-          console.log(`Reconnected and rejoining room: ${id}`);
-      });
-
-      setSocket(newSocket);
-
-      return () => {
-          newSocket.emit("leave", id);
-          newSocket.disconnect();
-      };
-    }, [id]);
-
-    useEffect(() => {
-      if (!socket) return;
-      
-      socket.on('docUpdate', (data) => {
-        const {field, value} = data;
-
-        if(field === 'title') setTitle(value);
-        else if(field === 'content') setContent(value);
-        else if(field === 'type') setEditorMode(value);
-      })
-
-      return () => {
-        socket.off('docUpdate');
-      };
-    }, [socket])
+            return () => {
+                socket.emit("leave", id);
+                socket.off("docUpdate");
+                console.log(`User left room: ${id}`);
+            };
+        }
+    }, [socket, id]);
 
     const handleFieldChange = (field, value) => {
       if (field === 'title') setTitle(value);
@@ -169,7 +146,6 @@ const DocumentFormEdit = () => {
           const decodedOutput = atob(result.data); 
           setMessage(`Result: ${decodedOutput}`);
         } else {
-          // const errorData = await response.json();
           setError(`Failedto run: Make sure to save the edited code before running`);
         }
       } catch (error) {
