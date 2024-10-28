@@ -1,12 +1,12 @@
-import React, {useState} from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useMessage } from '../modell/editorUtils';
 import { useSocket } from '../../context/SocketContext';
 
 const UserLogin = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { error, setError} = useMessage();
+    const { error, setError } = useMessage();
     const { connectSocket } = useSocket();
     const navigate = useNavigate();
     
@@ -25,12 +25,11 @@ const UserLogin = () => {
                 body: JSON.stringify(userData),
             };
             const response = await fetch(url, requestOptions);
-            const data = await response.json()
-
+            const data = await response.json();
 
             if (response.ok) {
                 localStorage.setItem('token', data.data.token);
-                connectSocket(data.data.token)
+                connectSocket(data.data.token);
                 navigate('/documents');
             } else {
                 setError('Failed to login. Please try again');
@@ -72,7 +71,7 @@ const UserLogin = () => {
             <a 
                 href="/request-reset-password"
                 onClick={(e) => {
-                    e.preventDefault(); // Prevent default anchor behavior
+                    e.preventDefault();
                     navigate('/request-reset-password');
                 }}>
                 Can't log in?

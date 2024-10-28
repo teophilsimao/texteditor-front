@@ -1,14 +1,14 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useSocket } from "../../context/SocketContext";
+import { useSocket } from '../../context/SocketContext';
 
 const LogoutButton = () => {
     const navigate = useNavigate();
-    const { disconnectSocket } = useSocket();
+    const { disconnectSocket } = useSocket()
   
     const handleLogout = () => {
-      disconnectSocket();
       localStorage.removeItem('token');
+      disconnectSocket();
       navigate('/');
     };
   
